@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Floor
   - fire1
+  - CollisionTag
   layers:
   - Default
   - TransparentFX
