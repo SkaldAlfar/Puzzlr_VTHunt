@@ -7,6 +7,7 @@ TagManager:
   - Floor
   - fire1
   - CollisionTag
+  - pacman
   layers:
   - Default
   - TransparentFX

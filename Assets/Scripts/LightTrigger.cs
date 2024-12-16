@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class LightTrigger : MonoBehaviour
 {
-    private SerialPort serialPort = new SerialPort("COM4", 9600);  // Adjust COM port and baud rate
+    private SerialPort serialPort = new SerialPort("COM6", 9600);  // Adjust COM port and baud rate
 
     void Start()
     {

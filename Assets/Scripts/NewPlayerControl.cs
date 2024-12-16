@@ -17,6 +17,7 @@ public class NewPlayerControl : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private int jumpCount = 0;
     private bool isGrounded = false;
+    private bool isTouchingPacman = false;
     Rigidbody2D rb;
 
     // Start is called before the first frame update
@@ -34,7 +35,7 @@ public class NewPlayerControl : MonoBehaviour
         // horizontalMove = Input.GetAxisRaw("Horizontal") * speed;
 
         // Reset idle time if any key is pressed
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetKeyDown(KeyCode.Space) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
         {
             idleTime = 0f;
             // Left/right
@@ -51,10 +52,27 @@ public class NewPlayerControl : MonoBehaviour
                 animator.SetBool("isRunning", true);
                 animator.SetBool("isIdle", false);
             }
-            
+
+            if (isTouchingPacman)
+            {
+                // Pacman up/down
+                if (Input.GetKey(KeyCode.W) && isTouchingPacman){
+                    transform.position += new Vector3(0f, speed * Time.deltaTime, 0f);
+                    animator.SetBool("isRunning", true);
+                    animator.SetBool("isIdle", false);
+                    Debug.Log("Up");
+                }
+
+                if (Input.GetKey(KeyCode.S)){
+                    transform.position -= new Vector3(0f, speed * Time.deltaTime, 0f);
+                    animator.SetBool("isRunning", true);
+                    animator.SetBool("isIdle", false);
+                    Debug.Log("Down");
+                }
+            }
+                
             // Jump
-            // TODO: Change jump so it doesn't build on the last
-            if (Input.GetKeyDown(KeyCode.Space) && jumpCount < 2){
+            if (Input.GetKeyDown(KeyCode.Space) && jumpCount < 2 && !isTouchingPacman){
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 jumpCount++;
             }
@@ -87,22 +105,26 @@ public class NewPlayerControl : MonoBehaviour
             jumpCount = 0;
             isGrounded = true;
         }
+
+        if (collision.gameObject.CompareTag("pacman"))
+        {
+            isTouchingPacman = true;
+            rb.gravityScale = 0f;
+            Debug.Log("Touching Pacman");
+        }
+        else if (collision.gameObject.CompareTag("Floor")) {
+            isTouchingPacman = false;
+            rb.gravityScale = 1f;
+            Debug.Log("Touching Floor");
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
         // Detect when the player leaves the ground
-        if (collision.gameObject.CompareTag("Floor"))
+        if (collision.gameObject.CompareTag("Floor") || collision.gameObject.CompareTag("pacman"))
         {
             isGrounded = false;
         }
     }
-
-//     void OnCollisionEnter2D(Collision2D collision)
-//     {
-//         if(collision.gameObject.tag == "CollisionTag" && firstAudio == false){
-//             soundSource.Play();
-//             firstAudio = true;
-//         }
-//     }
 }
